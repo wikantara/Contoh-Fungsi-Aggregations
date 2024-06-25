@@ -1,0 +1,22 @@
+db.customers.aggregate([
+    {
+        $group: {
+            _id: "$account_id",
+            totalTransactionCount: { $sum: "$transaction_count" },
+            activePeriodStart: { $min: "$bucket_start_date" },
+            activePeriodEnd: { $max: "$bucket_end_date" }
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            account_id: "$_id",
+            totalTransactionCount: 1,
+            activePeriodStart: 1,
+            activePeriodEnd: 1
+        }
+    },
+    {
+        $sort: { totalTransactionCount: -1 }
+    }
+]);
